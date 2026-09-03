@@ -29,6 +29,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        cursor: pointer; /* biar ada tangan pas diarahin */
     }
     .avatar {
         width: 55px;
@@ -85,7 +86,8 @@
         <div class="header-box">☰ XVvanNX</div>
     </div>
 
-    <div class="profil-box">
+    <!-- PROFIL KLIK MASUK KE profil.html LAGI -->
+    <div class="profil-box" onclick="window.location.href='profil.html'">
         <img src="https://i.imgur.com/8Km9tLL.png" class="avatar">
         <div class="nama-profil">
             <div class="centang">V</div>
@@ -96,6 +98,7 @@
     <div class="teman-section">
         <div class="judul-teman">Teman</div>
         <div class="list-teman">
+            <!-- TOMBOL + UDAH KE teman.html -->
             <button class="btn-bulat" onclick="window.location.href='teman.html'">+</button>
             <button class="btn-bulat"></button>
             <button class="btn-bulat"></button>
@@ -103,7 +106,6 @@
     </div>
 
 <script>
-    // Ambil nama dari login
     let nama = localStorage.getItem('xv_nama');
     if(nama){
         document.getElementById('namaUser').innerText = nama;
