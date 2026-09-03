@@ -12,8 +12,8 @@ button{width:100%;padding:10px;background:#1D9BF0;color:white;border:none;border
 </head>
 <body>
 <div class="box">
-  <h2>Login</h2>
-  <input type="text" id="nama" placeholder="Nama">
+  <h2>Login XVvanNX</h2>
+  <input type="text" id="nama" placeholder="Nama Kamu">
   <input type="file" id="foto" accept="image/*">
   <button onclick="login()">Masuk</button>
 </div>
@@ -22,13 +22,14 @@ button{width:100%;padding:10px;background:#1D9BF0;color:white;border:none;border
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyC...", // GANTI PAKE PUNYAMU
-  authDomain: "xvannx.firebaseapp.com",
-  databaseURL: "https://xvannx-default-rtdb.firebaseio.com",
-  projectId: "xvannx",
-  storageBucket: "xvannx.appspot.com",
-  messagingSenderId: "123",
-  appId: "1:123:web:abc"
+  apiKey: "AIzaSyCrTTBk1gPDVG4eVL_XfrdfFqelGPExSqU",
+  authDomain: "van-social.firebaseapp.com",
+  databaseURL: "https://van-social-default-rtdb.firebaseio.com",
+  projectId: "van-social",
+  storageBucket: "van-social.firebasestorage.app",
+  messagingSenderId: "975410134186",
+  appId: "1:975410134186:web:befaac94622eed85de64d3",
+  measurementId: "G-ZVZXSKC42Q"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -36,28 +37,18 @@ const db = firebase.database();
 function login(){
   let nama = document.getElementById('nama').value;
   let file = document.getElementById('foto').files[0];
-  
   if(nama == "") return alert("Isi nama dulu");
 
   let reader = new FileReader();
   reader.onload = function(e){
-    let foto = e.target.result;
-
-    // 1. SIMPEN KE LOCALSTORAGE BUAT DIPAKE DI WEB
+    let foto = e.target.result || "";
     localStorage.setItem('xv_nama', nama);
     localStorage.setItem('xv_foto', foto);
-
-    // 2. SIMPEN KE FIREBASE BIAR BISA DICARI ORANG LAIN
-    db.ref('users/'+nama).set({
-      nama: nama,
-      foto: foto
-    });
-
-    // 3. PINDAH KE BERANDA
+    db.ref('users/'+nama).set({ nama: nama, foto: foto });
     window.location.href = "index.html";
   }
   if(file) reader.readAsDataURL(file);
-  else reader.onload(); // kalau ga upload foto
+  else reader.onload();
 }
 </script>
 </body>
