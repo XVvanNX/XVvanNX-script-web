@@ -2,69 +2,66 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cari Teman</title>
+<title>Cari Teman - XVvanNX</title>
 <style>
 body{background:#F0F0F0;padding:10px;font-family:Arial}
-.header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.back{font-size:20px;font-weight:bold;cursor:pointer}
-.search{width:100%;padding:10px;border:3px solid black;border-radius:12px;font-size:16px}
-.user-list{margin-top:15px}
-.user{display:flex;align-items:center;justify-content:space-between;background:white;padding:10px;border:3px solid black;border-radius:12px;margin-bottom:10px}
-.user-info{display:flex;align-items:center;gap:10px}
-.user-avatar{width:50px;height:50px;border-radius:50%;border:2px solid black;background:#ddd;background-size:cover}
-.btn-tambah{background:#1D9BF0;color:white;border:none;padding:8px 15px;border-radius:8px;font-weight:bold;cursor:pointer}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:15px;font-weight:bold;font-size:18px}
+.header div:first-child{cursor:pointer}
+.user{display:flex;align-items:center;gap:10px;background:white;padding:10px;border:3px solid black;border-radius:12px;margin-bottom:10px}
+.user-avatar{width:50px;height:50px;border-radius:50%;border:2px solid black;background:#ddd;background-size:cover;background-position:center;flex-shrink:0}
+.user span{flex:1;font-weight:bold}
+.user button{padding:8px 12px;border:2px solid black;border-radius:8px;background:#1D9BF0;color:white;font-weight:bold;cursor:pointer}
+.loading{text-align:center;padding:20px}
 </style>
 </head>
 <body>
-
 <div class="header">
-  <div class="back" onclick="window.location.href='index.html'">← Kembali</div>
+  <div onclick="window.location.href='index.html'">←</div>
+  <div>Cari Teman</div>
 </div>
-
-<input type="text" class="search" id="searchInput" placeholder="🔍 Cari nama...">
-
-<div class="user-list" id="userList">Memuat...</div>
+<div id="userList"><div class="loading">Memuat...</div></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyC...",
-  authDomain: "xvannx.firebaseapp.com",
-  databaseURL: "https://xvannx-default-rtdb.firebaseio.com",
-  projectId: "xvannx",
-  storageBucket: "xvannx.appspot.com",
-  messagingSenderId: "123",
-  appId: "1:123:web:abc"
+  apiKey: "AIzaSyCrTTBk1gPDVG4eVL_XfrdfFqelGPExSqU",
+  authDomain: "van-social.firebaseapp.com",
+  databaseURL: "https://van-social-default-rtdb.firebaseio.com",
+  projectId: "van-social",
+  storageBucket: "van-social.firebasestorage.app",
+  messagingSenderId: "975410134186",
+  appId: "1:975410134186:web:befaac94622eed85de64d3",
+  measurementId: "G-ZVZXSKC42Q"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentUser = localStorage.getItem('xv_nama');
+if(!currentUser){ window.location.href = "login.html"; }
 
-// Load semua user kecuali diri sendiri
 db.ref('users').once('value').then(snapshot=>{
-  let users = snapshot.val();
   let html = '';
-  for(let key in users){
-    if(users[key].nama!== currentUser){
+  snapshot.forEach(child=>{
+    let id = child.key;
+    let t = child.val();
+    if(id!= currentUser){ // OTOMATIS HAPUS DIRI SENDIRI
       html += `
       <div class="user">
-        <div class="user-info">
-          <div class="user-avatar" style="background-image:url(${users[key].foto})"></div>
-          <span>${users[key].nama}</span>
-        </div>
-        <button class="btn-tambah" onclick="tambahTeman('${key}','${users[key].nama}','${users[key].foto}')">Tambah</button>
+        <div class="user-avatar" style="background-image:url(${t.foto || ''})"></div>
+        <span>${t.nama}</span>
+        <button onclick="tambahTeman('${id}')">Tambah</button>
       </div>`;
     }
-  }
-  document.getElementById('userList').innerHTML = html || "Ga ada user lain";
+  })
+  document.getElementById('userList').innerHTML = html || "<div class='loading'>Ga ada orang lain</div>";
 })
 
-// Fungsi tambah teman
-function tambahTeman(id,nama,foto){
-  db.ref('teman/'+currentUser+'/'+id).set({nama:nama,foto:foto});
-  alert(nama + " ditambahkan ke teman!");
+function tambahTeman(id){
+  db.ref('users/'+id).once('value').then(s=>{
+    db.ref('teman/'+currentUser+'/'+id).set(s.val())
+   .then(()=>{ alert(id + " ditambah"); window.location.href = "index.html"; })
+  })
 }
 </script>
 </body>
