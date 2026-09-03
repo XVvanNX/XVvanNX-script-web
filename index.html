@@ -2,115 +2,56 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XVvanNX</title>
+<title>Beranda XVvanNX</title>
 <style>
     * { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #F0F0F0; }
-
-    .header {
-        padding: 10px 15px;
-        background: white;
-        border-bottom: 3px solid black;
-    }
-    .header-box {
-        border: 3px solid black;
-        border-radius: 10px;
-        padding: 10px;
-        font-weight: bold;
-        font-size: 18px;
-    }
-
-    .profil-box {
-        margin: 15px;
-        background: white;
-        border: 3px solid black;
-        border-radius: 12px;
-        padding: 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer; /* biar ada tangan pas diarahin */
-    }
-    .avatar {
-        width: 55px;
-        height: 55px;
-        border-radius: 50%;
-        border: 2px solid black;
-        object-fit: cover;
-    }
-    .nama-profil {
-        font-weight: bold;
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    .centang {
-        width: 18px;
-        height: 18px;
-        background: #1D9BF0;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-size: 12px;
-    }
-
-    .teman-section {
-        padding: 0 15px;
-    }
-    .judul-teman {
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-    .list-teman {
-        display: flex;
-        gap: 15px;
-    }
-    .btn-bulat {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 3px solid black;
-        background: white;
-        font-size: 30px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+    body { background: #F0F0F0; padding: 10px; }
+   .header { display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border-radius: 12px; border: 3px solid black; }
+   .menu { font-size: 24px; font-weight: bold; }
+   .logo { font-size: 20px; font-weight: bold; }
+   .logo.v { border: 2px solid black; border-radius: 50%; padding: 0 4px; }
+   .profil-box { display: flex; align-items: center; gap: 15px; margin-top: 15px; background: white; padding: 15px; border-radius: 12px; border: 3px solid black; cursor: pointer; }
+   .profil-box:active { background: #eee; }
+   .avatar { width: 60px; height: 60px; border: 3px solid black; border-radius: 50%; background: #ddd; background-size: cover; background-position: center; }
+   .nama { font-size: 22px; font-weight: bold; }
+   .teman-title { margin-top: 20px; font-size: 18px; font-weight: bold; }
+   .teman-list { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; }
+   .teman { width: 70px; height: 70px; border: 3px solid black; border-radius: 50%; background: white; display: flex; justify-content: center; align-items: center; flex-shrink: 0; cursor: pointer; } /* tambahin cursor */
+   .add { font-size: 30px; }
+   .add:active { background: #eee; } /* biar ada efek pas diklik */
 </style>
 </head>
 <body>
-
     <div class="header">
-        <div class="header-box">☰ XVvanNX</div>
+      <div class="menu">☰</div>
+      <div class="logo">X<span class="v">V</span>vanNX</div>
     </div>
 
-    <!-- PROFIL KLIK MASUK KE profil.html LAGI -->
-    <div class="profil-box" onclick="window.location.href='profil.html'">
-        <img src="https://i.imgur.com/8Km9tLL.png" class="avatar">
-        <div class="nama-profil">
-            <div class="centang">V</div>
-            <span id="namaUser">Van</span>
-        </div>
+    <div class="profil-box" onclick="window.location.href='profil.html'"> <!-- PINDAH KE PROFIL.HTML -->
+      <div class="avatar" id="avatarBeranda"></div>
+      <div class="nama" id="namaBeranda">NAMA</div>
     </div>
 
-    <div class="teman-section">
-        <div class="judul-teman">Teman</div>
-        <div class="list-teman">
-            <!-- TOMBOL + UDAH KE teman.html -->
-            <button class="btn-bulat" onclick="window.location.href='teman.html'">+</button>
-            <button class="btn-bulat"></button>
-            <button class="btn-bulat"></button>
-        </div>
+    <div class="teman-title">Teman</div>
+    <div class="teman-list">
+        <div class="teman add" onclick="window.location.href='teman.html'">+</div> <!-- INI YG DITAMBAH -->
+        <div class="teman"></div>
+        <div class="teman"></div>
     </div>
 
 <script>
-    let nama = localStorage.getItem('xv_nama');
-    if(nama){
-        document.getElementById('namaUser').innerText = nama;
+    // kalau belum login balik ke login
+    if(!localStorage.getItem('xv_nama')){
+        window.location.href = "login.html";
+    }
+
+    // load nama + foto
+    window.onload = function() {
+        let nama = localStorage.getItem('xv_nama');
+        let foto = localStorage.getItem('xv_foto');
+        document.getElementById('namaBeranda').innerText = nama;
+        if(foto) document.getElementById('avatarBeranda').style.backgroundImage = `url(${foto})`;
     }
 </script>
-
 </body>
 </html>
