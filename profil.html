@@ -6,157 +6,20 @@
 <style>
     * { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #F0F0F0; }
-  .banner { height: 150px; background: #ccc; position: relative; border-bottom: 4px solid black; background-size: cover; background-position: center; }
-  .ganti-banner { position: absolute; bottom: 10px; right: 10px; background: white; border: 2px solid black; border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; z-index: 99; }
-  .profil-info { background: white; padding: 15px; border-bottom: 4px solid black; position: relative; }
-  .profil-atas { display: flex; align-items: center; gap: 15px; }
-    #avatarProfil { width: 90px; height: 90px; border: 4px solid black; border-radius: 50%; position: relative; margin-top: -45px; background: #ddd; background-size: cover; background-position: center; z-index: 3; }
- .edit-foto { position: absolute; bottom: 0; right: 0; background: white; border: 2px solid black; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 99; }
-    #namaProfil { font-size: 28px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
- .edit-nama { font-size: 16px; cursor: pointer; }
- .stats { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
- .stat-box { background: white; border: 3px solid black; border-radius: 10px; padding: 5px 12px; font-weight: bold; }
- .back { padding: 10px; background: white; border-bottom: 2px solid black; cursor: pointer; font-weight: bold; }
- .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 10; }
- .popup-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 300px; border: 3px solid black; }
- .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
- .btn-save { background: #00B000; color: white; margin-bottom: 10px; }
- .btn-close { background: #E2231A; color: white; }
-</style>
-</head>
-<body>
-    <div class="back" onclick="window.location.href='index.html'">← Kembali</div>
-
-    <div class="banner" id="bannerProfil">
-      <input type="file" id="inputBanner" accept="image/*" style="display:none">
-      <label for="inputBanner" class="ganti-banner">📷</label>
-    </div>
-
-    <div class="profil-info">
-      <div class="profil-atas">
-        <div id="avatarProfil"> <!-- DIHAPUS CLASS AVATAR BIAR GA KENA CSS LAIN -->
-          <input type="file" id="inputFoto" accept="image/*" style="display:none">
-          <label for="inputFoto" class="edit-foto">📷</label>
-        </div>
-        <div>
-          <div id="namaProfil">
-            <span id="textNama">Loading...</span> <!-- DEFAULT LOADING -->
-            <span class="edit-nama" id="btnEditNama">✏️</span>
-          </div>
-        </div>
-      </div>
-      <div class="stats"><div class="stat-box">0 Friend</div><div class="stat-box">0 Followers</div><div class="stat-box">0 Following</div></div>
-    </div>
-
-    <!-- ACHIEVEMENT UDAH DIHAPUS -->
-
-<script>
-    // CEK LOGIN DULU
-    if(!localStorage.getItem('xv_nama')){
-        window.location.href = "login.html";
-    }
-
-    window.onload = function() {
-        loadData(); // LANGSUNG LOAD NAMA DARI LOGIN
-
-        document.getElementById('btnEditNama').onclick = bukaPopup;
-        document.getElementById('btnTutup').onclick = tutupPopup;
-        document.getElementById('btnSimpan').onclick = simpanNama;
-        document.getElementById('inputFoto').onchange = gantiFoto;
-        document.getElementById('inputBanner').onchange = gantiBanner;
-    }
-
-    function loadData(){
-        let nama = localStorage.getItem('xv_nama'); // AMBIL NAMA DARI LOGIN
-        let foto = localStorage.getItem('xv_foto');
-        let banner = localStorage.getItem('xv_banner');
-
-        document.getElementById('textNama').innerText = nama; // MASUKIN KE PROFIL
-
-        if(foto) {
-          document.getElementById('avatarProfil').style.backgroundImage = `url(${foto})`;
-        }
-        if(banner) {
-          document.getElementById('bannerProfil').style.backgroundImage = `url(${banner})`;
-        }
-    }
-
-    function bukaPopup() {
-      document.getElementById('popupEdit').style.display = 'flex';
-      document.getElementById('inputNama').value = document.getElementById('textNama').innerText;
-    }
-    function tutupPopup() {document.getElementById('popupEdit').style.display = 'none';}
-
-    function simpanNama() {
-      let namaBaru = document.getElementById('inputNama').value;
-      if(namaBaru.trim()!== ""){
-        localStorage.setItem('xv_nama', namaBaru);
-        document.getElementById('textNama').innerText = namaBaru;
-      }
-      tutupPopup();
-    }
-
-    function gantiFoto(event) {
-      let file = event.target.files[0];
-      if(!file) return;
-      let reader = new FileReader();
-      reader.onload = function(e){
-        let data = e.target.result;
-        localStorage.setItem('xv_foto', data);
-        document.getElementById('avatarProfil').style.backgroundImage = `url(${data})`;
-      }
-      reader.readAsDataURL(file);
-    }
-
-    function gantiBanner(event) {
-      let file = event.target.files[0];
-      if(!file) return;
-      let reader = new FileReader();
-      reader.onload = function(e){
-        let data = e.target.result;
-        localStorage.setItem('xv_banner', data);
-        document.getElementById('bannerProfil').style.backgroundImage = `url(${data})`;
-      }
-      reader.readAsDataURL(file);
-    }
-</script>
-
-  <!-- POPUP EDIT NAMA -->
-  <div class="popup" id="popupEdit">
-    <div class="popup-box">
-      <h2>Edit Nama</h2>
-      <input type="text" id="inputNama">
-      <button class="btn btn-save" id="btnSimpan">Simpan</button>
-      <button class="btn btn-close" id="btnTutup">Tutup</button>
-    </div>
-  </div>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profil XVvanNX</title>
-<style>
-    * { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #F0F0F0; }
  .banner { height: 150px; background: #ccc; position: relative; border-bottom: 4px solid black; background-size: cover; background-position: center; }
  .ganti-banner { position: absolute; bottom: 10px; right: 10px; background: white; border: 2px solid black; border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; z-index: 99; }
  .profil-info { background: white; padding: 15px; border-bottom: 4px solid black; position: relative; }
  .profil-atas { display: flex; align-items: center; gap: 15px; }
     #avatarProfil { width: 90px; height: 90px; border: 4px solid black; border-radius: 50%; position: relative; margin-top: -45px; background: #ddd; background-size: cover; background-position: center; z-index: 3; }
-.edit-foto { position: absolute; bottom: 0; right: 0; background: white; border: 2px solid black; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 99; }
-    #namaProfil { font-size: 28px; font-weight: bold; display: flex; align-items: center; gap: 6px; } /* gap ditambah */
+.edit-foto { position: absolute; bottom: 3px; right: 3px; background: white; border: 2px solid black; border-radius: 50%; width: 28px; height: 28px; font-size: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 99; }
+    #namaProfil { font-size: 28px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
 .edit-nama { font-size: 16px; cursor: pointer; }
-
- /* INI CSS CENTANG BIRU BARU */
  .centang-biru {
     width: 22px;
     height: 22px;
     background: #1D9BF0;
     border-radius: 50%;
-    display: none; /* default sembunyi */
+    display: none;
     justify-content: center;
     align-items: center;
     color: white;
@@ -164,7 +27,6 @@
     font-weight: bold;
     border: 2px solid white;
   }
-
 .stats { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
 .stat-box { background: white; border: 3px solid black; border-radius: 10px; padding: 5px 12px; font-weight: bold; }
 .back { padding: 10px; background: white; border-bottom: 2px solid black; cursor: pointer; font-weight: bold; }
@@ -187,12 +49,12 @@
       <div class="profil-atas">
         <div id="avatarProfil">
           <input type="file" id="inputFoto" accept="image/*" style="display:none">
-          <label for="inputFoto" class="edit-foto">✏️</label>
+          <label for="inputFoto" class="edit-foto">📷</label> <!-- GANTI JADI KAMERA BIAR JELAS -->
         </div>
         <div>
           <div id="namaProfil">
             <span id="textNama">Loading...</span>
-            <div class="centang-biru" id="badgeVerif">✓</div> <!-- INI CENTANGNYA -->
+            <div class="centang-biru" id="badgeVerif">✓</div>
             <span class="edit-nama" id="btnEditNama">✏️</span>
           </div>
         </div>
@@ -221,9 +83,8 @@
 
         document.getElementById('textNama').innerText = nama;
 
-        // INI KODE CENTANG BIRU KHUSUS
-        // GANTI "XVvanNX" DENGAN NAMA KAMU YANG MAU DAPET CENTANG
-        if(nama === "XVvanNX"){
+        // GANTI "Van" SESUAI NAMA KAMU BUAT DAPET CENTANG
+        if(nama === "ⓥ Van"){
           document.getElementById('badgeVerif').style.display = 'flex';
         }
 
@@ -246,7 +107,6 @@
       if(namaBaru.trim()!== ""){
         localStorage.setItem('xv_nama', namaBaru);
         document.getElementById('textNama').innerText = namaBaru;
-        // CEK LAGI SETELAH GANTI NAMA
         if(namaBaru === "ⓥ Van"){
           document.getElementById('badgeVerif').style.display = 'flex';
         } else {
@@ -284,7 +144,7 @@
   <div class="popup" id="popupEdit">
     <div class="popup-box">
       <h2>Edit Nama</h2>
-      <input type="text" id="inputNama">
+      <input type="text" id="inputNama" style="width:100%; padding:10px; margin:10px 0; border:2px solid black; border-radius:8px;">
       <button class="btn btn-save" id="btnSimpan">Simpan</button>
       <button class="btn btn-close" id="btnTutup">Tutup</button>
     </div>
