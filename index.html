@@ -1,22 +1,24 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Beranda XVvanNX</title>
 <style>
-    * { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #F0F0F0; padding: 10px; }
-  .header { display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border-radius: 12px; border: 3px solid black; }
-  .menu { font-size: 24px; font-weight: bold; }
-  .logo { font-size: 20px; font-weight: bold; }
-  .logo.v { border: 2px solid black; border-radius: 50%; padding: 0 4px; }
-  .profil-box { display: flex; align-items: center; gap: 15px; margin-top: 15px; background: white; padding: 15px; border-radius: 12px; border: 3px solid black; cursor: pointer; }
-  .avatar { width: 60px; height: 60px; border: 3px solid black; border-radius: 50%; background: #ddd; background-size: cover; background-position: center; }
-  .nama { font-size: 22px; font-weight: bold; }
-  .teman-title { margin-top: 20px; font-size: 18px; font-weight: bold; }
-  .teman-list { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; }
-  .teman { width: 70px; height: 70px; border: 3px solid black; border-radius: 50%; background: white; display: flex; justify-content: center; align-items: center; flex-shrink: 0; cursor: pointer; background-size: cover; flex-direction: column; font-size: 10px; }
-  .add { font-size: 30px; background: white; }
+* { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #F0F0F0; padding: 10px; }
+.header { display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border-radius: 12px; border: 3px solid black; }
+.menu { font-size: 24px; font-weight: bold; }
+.logo { font-size: 20px; font-weight: bold; }
+.logo.v { border: 2px solid black; border-radius: 50%; padding: 0 4px; }
+.profil-box { display: flex; align-items: center; gap: 15px; margin-top: 15px; background: white; padding: 15px; border-radius: 12px; border: 3px solid black; cursor: pointer; }
+.avatar { width: 60px; height: 60px; border: 3px solid black; border-radius: 50%; background: #ddd; background-size: cover; background-position: center; }
+.nama { font-size: 22px; font-weight: bold; }
+.teman-title { margin-top: 20px; font-size: 18px; font-weight: bold; }
+.teman-list { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; padding-bottom:5px }
+.teman { width: 70px; height: 70px; border: 3px solid black; border-radius: 50%; background: white; display: flex; justify-content: center; align-items: center; flex-shrink: 0; cursor: pointer; background-size: cover; background-position:center; position:relative }
+.add { font-size: 30px; background: white; }
+.del { position:absolute;background:red;color:white;border-radius:50%;width:18px;height:18px;font-size:12px;line-height:18px;text-align:center;top:-5px;right:-5px;cursor:pointer }
 </style>
 </head>
 <body>
@@ -39,36 +41,34 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyC...",
-  authDomain: "xvannx.firebaseapp.com",
-  databaseURL: "https://xvannx-default-rtdb.firebaseio.com",
-  projectId: "xvannx",
-  storageBucket: "xvannx.appspot.com",
-  messagingSenderId: "123",
-  appId: "1:123:web:abc"
+  apiKey: "AIzaSyCrTTBk1gPDVG4eVL_XfrdfFqelGPExSqU",
+  authDomain: "van-social.firebaseapp.com",
+  databaseURL: "https://van-social-default-rtdb.firebaseio.com",
+  projectId: "van-social",
+  storageBucket: "van-social.firebasestorage.app",
+  messagingSenderId: "975410134186",
+  appId: "1:975410134186:web:befaac94622eed85de64d3",
+  measurementId: "G-ZVZXSKC42Q"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentUser = localStorage.getItem('xv_nama');
-
 if(!currentUser){ window.location.href = "login.html"; }
 
 window.onload = function() {
-    let nama = localStorage.getItem('xv_nama');
-    let foto = localStorage.getItem('xv_foto');
-    document.getElementById('namaBeranda').innerText = nama;
-    if(foto) document.getElementById('avatarBeranda').style.backgroundImage = `url(${foto})`;
+    document.getElementById('namaBeranda').innerText = localStorage.getItem('xv_nama');
+    document.getElementById('avatarBeranda').style.backgroundImage = `url(${localStorage.getItem('xv_foto')})`;
 
-    // Load daftar teman
     db.ref('teman/'+currentUser).on('value', snapshot=>{
         let list = document.getElementById('temanList');
         list.innerHTML = `<div class="teman add" onclick="window.location.href='teman.html'">+</div>`;
         snapshot.forEach(child=>{
+            let id = child.key;
             let t = child.val();
             list.innerHTML += `
-            <div class="teman" style="background-image:url(${t.foto})" onclick="bukaProfil('${child.key}')">
-                ${t.nama}
+            <div class="teman" style="background-image:url(${t.foto})" onclick="bukaProfil('${id}')">
+                <div class="del" onclick="event.stopPropagation(); hapusTeman('${id}')">x</div>
             </div>`;
         })
     })
@@ -77,6 +77,12 @@ window.onload = function() {
 function bukaProfil(id){
     localStorage.setItem('profil_teman_id', id);
     window.location.href = 'profil_teman.html';
+}
+
+function hapusTeman(id){
+  if(confirm("Hapus "+id+" dari teman?")){
+    db.ref('teman/'+currentUser+'/'+id).remove();
+  }
 }
 </script>
 </body>
