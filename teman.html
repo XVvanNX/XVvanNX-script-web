@@ -2,97 +2,70 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tambah Teman</title>
+<title>Cari Teman</title>
 <style>
-    * { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #F0F0F0; }
-  .header { padding: 15px; background: white; border-bottom: 3px solid black; }
-  .search-box { width: 100%; padding: 12px; border: 3px solid black; border-radius: 20px; font-size: 16px; }
-  .list { padding: 15px; }
-  .judul { font-weight: bold; margin-bottom: 10px; font-size: 14px; color: #555; }
-  .user-card { display: flex; align-items: center; background: white; border: 3px solid black; border-radius: 12px; padding: 10px; margin-bottom: 10px; }
-  .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid black; background: #ddd; margin-right: 10px; }
-  .nama { font-weight: bold; flex: 1; display: flex; align-items: center; gap: 5px; }
-  .centang { width: 18px; height: 18px; background: #1D9BF0; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 12px; }
-  .btn-tambah { background: #0084FF; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-  .btn-tambah:disabled { background: #ccc; }
-  .back { padding: 10px; background: white; border-bottom: 2px solid black; cursor: pointer; font-weight: bold; }
+body{background:#F0F0F0;padding:10px;font-family:Arial}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.back{font-size:20px;font-weight:bold;cursor:pointer}
+.search{width:100%;padding:10px;border:3px solid black;border-radius:12px;font-size:16px}
+.user-list{margin-top:15px}
+.user{display:flex;align-items:center;justify-content:space-between;background:white;padding:10px;border:3px solid black;border-radius:12px;margin-bottom:10px}
+.user-info{display:flex;align-items:center;gap:10px}
+.user-avatar{width:50px;height:50px;border-radius:50%;border:2px solid black;background:#ddd;background-size:cover}
+.btn-tambah{background:#1D9BF0;color:white;border:none;padding:8px 15px;border-radius:8px;font-weight:bold;cursor:pointer}
 </style>
 </head>
 <body>
-    <div class="back" onclick="window.location.href='index.html'">← Kembali</div>
-    <div class="header">
-        <input type="text" class="search-box" id="inputSearch" placeholder="🔍 Cari nama...">
-    </div>
-    <div class="list">
-        <div class="judul">Semua Pengguna</div>
-        <div id="listUser">Loading...</div>
-    </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<div class="header">
+  <div class="back" onclick="window.location.href='index.html'">← Kembali</div>
+</div>
 
-  // CONFIG KAMU
-  const firebaseConfig = {
-    apiKey: "AIzaSyCrTTBk1gPDVG4eVL_XfrdfFqelGPExSqU",
-    authDomain: "van-social.firebaseapp.com",
-    databaseURL: "https://van-social-default-rtdb.firebaseio.com",
-    projectId: "van-social",
-    storageBucket: "van-social.firebasestorage.app",
-    messagingSenderId: "975410134186",
-    appId: "1:975410134186:web:befaac94622eed85de64d3",
-    measurementId: "G-ZVZXSKC42Q"
-  };
+<input type="text" class="search" id="searchInput" placeholder="🔍 Cari nama...">
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  let namaSendiri = localStorage.getItem('xv_nama');
-  let semuaDataUser = {};
+<div class="user-list" id="userList">Memuat...</div>
 
-  // DAFTARKAN DIRI SENDIRI PAS BUKA HALAMAN
-  if(namaSendiri){
-    set(ref(db, 'users/' + namaSendiri), {
-      nama: namaSendiri,
-      centang: namaSendiri.includes("ⓥ")
-    });
-  }
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC...",
+  authDomain: "xvannx.firebaseapp.com",
+  databaseURL: "https://xvannx-default-rtdb.firebaseio.com",
+  projectId: "xvannx",
+  storageBucket: "xvannx.appspot.com",
+  messagingSenderId: "123",
+  appId: "1:123:web:abc"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  // DENGERIN PERUBAHAN DATA REALTIME
-  const usersRef = ref(db, 'users');
-  onValue(usersRef, (snapshot) => {
-    semuaDataUser = snapshot.val() || {};
-    tampilkanUser(Object.keys(semuaDataUser));
-  });
+let currentUser = localStorage.getItem('xv_nama');
 
-  function tampilkanUser(list){
-    let container = document.getElementById('listUser');
-    container.innerHTML = "";
-    let filter = list.filter(u => u!== namaSendiri);
-
-    if(filter.length === 0){
-        container.innerHTML = "<p>Belum ada orang lain</p>";
-        return;
-    }
-
-    filter.forEach(nama => {
-      let data = semuaDataUser[nama];
-      let badge = data.centang? `<div class="centang">✓</div>` : "";
-      container.innerHTML += `
-        <div class="user-card">
-          <div class="avatar"></div>
-          <div class="nama">${nama} ${badge}</div>
-          <button class="btn-tambah">Tambah</button>
+// Load semua user kecuali diri sendiri
+db.ref('users').once('value').then(snapshot=>{
+  let users = snapshot.val();
+  let html = '';
+  for(let key in users){
+    if(users[key].nama!== currentUser){
+      html += `
+      <div class="user">
+        <div class="user-info">
+          <div class="user-avatar" style="background-image:url(${users[key].foto})"></div>
+          <span>${users[key].nama}</span>
         </div>
-      `;
-    });
+        <button class="btn-tambah" onclick="tambahTeman('${key}','${users[key].nama}','${users[key].foto}')">Tambah</button>
+      </div>`;
+    }
   }
+  document.getElementById('userList').innerHTML = html || "Ga ada user lain";
+})
 
-  document.getElementById('inputSearch').oninput = function(){
-    let keyword = this.value.toLowerCase();
-    let hasil = Object.keys(semuaDataUser).filter(nama => nama.toLowerCase().includes(keyword));
-    tampilkanUser(hasil);
-  }
+// Fungsi tambah teman
+function tambahTeman(id,nama,foto){
+  db.ref('teman/'+currentUser+'/'+id).set({nama:nama,foto:foto});
+  alert(nama + " ditambahkan ke teman!");
+}
 </script>
 </body>
 </html>
