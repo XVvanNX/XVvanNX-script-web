@@ -4,34 +4,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login XVvanNX</title>
 <style>
-    * { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #F0F0F0; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; gap: 15px; text-align: center; }
-    h1 { font-size: 32px; }
-    h1.v { border: 3px solid black; border-radius: 50%; padding: 0 6px; }
-    input { width: 80%; max-width: 300px; padding: 12px; border: 3px solid black; border-radius: 10px; font-size: 16px; }
-    button { padding: 12px 25px; background: #00B000; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
+body{background:#F0F0F0;display:flex;justify-content:center;align-items:center;height:100vh;font-family:Arial}
+.box{background:white;padding:20px;border:3px solid black;border-radius:12px;width:300px}
+input{width:100%;padding:10px;margin:10px 0;border:2px solid black;border-radius:8px}
+button{width:100%;padding:10px;background:#1D9BF0;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
 </style>
 </head>
 <body>
-    <h1>X<span class="v">V</span>vanNX</h1>
-    <p>Selamat Datang! Masukkan Nama Kamu</p>
-    <input type="text" id="inputLoginNama" placeholder="Contoh: XVvanNX">
-    <button onclick="loginSederhana()">Masuk</button>
+<div class="box">
+  <h2>Login</h2>
+  <input type="text" id="nama" placeholder="Nama">
+  <input type="file" id="foto" accept="image/*">
+  <button onclick="login()">Masuk</button>
+</div>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script>
-    if(localStorage.getItem('xv_nama')){
-        window.location.href = "index.html"; // kalau udah login langsung ke beranda
-    }
+const firebaseConfig = {
+  apiKey: "AIzaSyC...", // GANTI PAKE PUNYAMU
+  authDomain: "xvannx.firebaseapp.com",
+  databaseURL: "https://xvannx-default-rtdb.firebaseio.com",
+  projectId: "xvannx",
+  storageBucket: "xvannx.appspot.com",
+  messagingSenderId: "123",
+  appId: "1:123:web:abc"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-    function loginSederhana(){
-        let nama = document.getElementById('inputLoginNama').value;
-        if(nama.trim()!== ""){
-            localStorage.setItem('xv_nama', nama);
-            window.location.href = "index.html"; // pindah ke beranda
-        } else {
-            alert("Nama jangan kosong ya!");
-        }
-    }
+function login(){
+  let nama = document.getElementById('nama').value;
+  let file = document.getElementById('foto').files[0];
+  
+  if(nama == "") return alert("Isi nama dulu");
+
+  let reader = new FileReader();
+  reader.onload = function(e){
+    let foto = e.target.result;
+
+    // 1. SIMPEN KE LOCALSTORAGE BUAT DIPAKE DI WEB
+    localStorage.setItem('xv_nama', nama);
+    localStorage.setItem('xv_foto', foto);
+
+    // 2. SIMPEN KE FIREBASE BIAR BISA DICARI ORANG LAIN
+    db.ref('users/'+nama).set({
+      nama: nama,
+      foto: foto
+    });
+
+    // 3. PINDAH KE BERANDA
+    window.location.href = "index.html";
+  }
+  if(file) reader.readAsDataURL(file);
+  else reader.onload(); // kalau ga upload foto
+}
 </script>
 </body>
 </html>
