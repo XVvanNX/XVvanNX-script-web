@@ -5,16 +5,15 @@
 <title>Login XVvanNX</title>
 <style>
 body{background:#F0F0F0;display:flex;justify-content:center;align-items:center;height:100vh;font-family:Arial}
-.box{background:white;padding:20px;border:3px solid black;border-radius:12px;width:300px}
-input{width:100%;padding:10px;margin:10px 0;border:2px solid black;border-radius:8px}
+.box{background:white;padding:20px;border:3px solid black;border-radius:12px;width:300px;text-align:center}
+input{width:100%;padding:10px;margin:10px 0;border:2px solid black;border-radius:8px;box-sizing:border-box}
 button{width:100%;padding:10px;background:#1D9BF0;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="box">
-  <h2>Login XVvanNX</h2>
-  <input type="text" id="nama" placeholder="Nama Kamu">
-  <input type="file" id="foto" accept="image/*">
+  <h2>XVvanNX</h2>
+  <input type="text" id="nama" placeholder="Masukkan Nama">
   <button onclick="login()">Masuk</button>
 </div>
 
@@ -35,20 +34,17 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 function login(){
-  let nama = document.getElementById('nama').value;
-  let file = document.getElementById('foto').files[0];
+  let nama = document.getElementById('nama').value.trim();
   if(nama == "") return alert("Isi nama dulu");
 
-  let reader = new FileReader();
-  reader.onload = function(e){
-    let foto = e.target.result || "";
-    localStorage.setItem('xv_nama', nama);
-    localStorage.setItem('xv_foto', foto);
-    db.ref('users/'+nama).set({ nama: nama, foto: foto });
-    window.location.href = "index.html";
-  }
-  if(file) reader.readAsDataURL(file);
-  else reader.onload();
+  localStorage.setItem('xv_nama', nama);
+
+  db.ref('users/'+nama).once('value').then(s=>{
+    if(!s.exists()){
+      db.ref('users/'+nama).set({ nama: nama, foto: "", banner: "" });
+    }
+  })
+  window.location.href = "index.html";
 }
 </script>
 </body>
