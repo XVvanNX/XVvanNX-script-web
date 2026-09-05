@@ -33,7 +33,7 @@ body { background: #F0F0F0; }
 .sidebar a:hover { background-color: #eee; }
 
 /* KONTEN */
-.content { padding: 10px; transition: 0.3s; }
+.content { padding: 10px; }
 
 .profil-box { display: flex; align-items: center; gap: 15px; margin-top: 15px; background: white; padding: 15px; border-radius: 12px; border: 3px solid black; cursor: pointer; }
 .avatar { width: 60px; height: 60px; border: 3px solid black; border-radius: 50%; background: #ddd; background-size: cover; background-position: center; }
@@ -43,6 +43,41 @@ body { background: #F0F0F0; }
 .teman { width: 70px; height: 70px; border: 3px solid black; border-radius: 50%; background: white; display: flex; justify-content: center; align-items: center; flex-shrink: 0; cursor: pointer; background-size: cover; background-position:center; position:relative }
 .add { font-size: 30px; background: white; }
 .del { position:absolute;background:red;color:white;border-radius:50%;width:18px;height:18px;font-size:12px;line-height:18px;text-align:center;top:-5px;right:-5px;cursor:pointer }
+
+/* GRID KOTAK GAME PUTIH HITAM */
+.game-title { margin: 20px 0 10px 0; font-size: 18px; font-weight: bold; }
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 kolom */
+  gap: 12px;
+  padding-bottom: 20px;
+}
+.kotak-game {
+  background: white;
+  border-radius: 12px;
+  border: 3px solid black;
+  overflow: hidden;
+  cursor: pointer;
+}
+.kotak-game img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 2px solid black;
+}
+.info-game {
+  padding: 10px;
+  text-align: center;
+}
+.nama-game {
+  font-size: 15px;
+  font-weight: bold;
+  color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
 </head>
 <body>
@@ -50,8 +85,8 @@ body { background: #F0F0F0; }
 <!-- SIDEBAR -->
 <div id="mySidebar" class="sidebar">
   <div class="back-btn" onclick="tutupSidebar()">← Kembali</div>
-  <a href="bypass.html">🔑 Delta Key Bypass</a>
-  <a href="musik.html">🎵 Music</a>
+  <a href="bypass.html">🔑 Bypass ng</a>
+  <a href="musik.html">🎵 Musik</a>
 </div>
 
 <!-- KONTEN UTAMA -->
@@ -70,6 +105,11 @@ body { background: #F0F0F0; }
     <div class="teman-list" id="temanList">
         <div class="teman add" onclick="window.location.href='teman.html'">+</div>
     </div>
+
+    <!-- GRID GAME -->
+    <div class="game-title">Game</div>
+    <div class="grid-container" id="gridGame"></div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -103,6 +143,7 @@ window.onload = function() {
     document.getElementById('namaBeranda').innerText = localStorage.getItem('xv_nama');
     document.getElementById('avatarBeranda').style.backgroundImage = `url(${localStorage.getItem('xv_foto')})`;
 
+    // LOAD TEMAN
     db.ref('teman/'+currentUser).on('value', snapshot=>{
         let list = document.getElementById('temanList');
         list.innerHTML = `<div class="teman add" onclick="window.location.href='teman.html'">+</div>`;
@@ -115,11 +156,31 @@ window.onload = function() {
             </div>`;
         })
     })
+
+    // LOAD GAME DARI FIREBASE
+    db.ref('game').on('value', snapshot=>{
+        let grid = document.getElementById('gridGame');
+        grid.innerHTML = '';
+        snapshot.forEach(child=>{
+            let g = child.val();
+            grid.innerHTML += `
+            <div class="kotak-game" onclick="bukaGame('${child.key}')">
+                <img src="${g.gambar}" onerror="this.src='https://via.placeholder.com/200x140/cccccc/000?text=No+Image'">
+                <div class="info-game">
+                    <div class="nama-game">${g.nama}</div>
+                </div>
+            </div>`;
+        })
+    })
 }
 
 function bukaProfil(id){
     localStorage.setItem('profil_teman_id', id);
     window.location.href = 'profil_teman.html';
+}
+
+function bukaGame(id){
+    alert("Buka game: " + id); // Nanti ganti ke halaman game
 }
 
 function hapusTeman(id){
