@@ -101,6 +101,7 @@ body { background: #F0F0F0; }
       <div class="nama" id="namaBeranda">NAMA</div>
     </div>
 
+    <!-- INI LIST TEMANNYA WOI -->
     <div class="teman-title">Teman</div>
     <div class="teman-list" id="temanList">
         <div class="teman add" onclick="window.location.href='teman.html'">+</div>
@@ -143,7 +144,7 @@ window.onload = function() {
     document.getElementById('namaBeranda').innerText = localStorage.getItem('xv_nama');
     document.getElementById('avatarBeranda').style.backgroundImage = `url(${localStorage.getItem('xv_foto')})`;
 
-    // LOAD TEMAN
+    // LOAD TEMAN - UDAH DIBALIKIN
     db.ref('teman/'+currentUser).on('value', snapshot=>{
         let list = document.getElementById('temanList');
         list.innerHTML = `<div class="teman add" onclick="window.location.href='teman.html'">+</div>`;
